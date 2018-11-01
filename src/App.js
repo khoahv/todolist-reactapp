@@ -8,7 +8,12 @@ class App extends Component {
         super(props)
         this.state={
             tasks: [],
-            isDisplayForm: false
+            isDisplayForm: false,
+            filter: {
+                name: '',
+                status: -1
+            },
+            keyword: ''
         }
         
     }
@@ -103,8 +108,52 @@ onUppdate = (id) =>{
     //     tasks: tasks
     // })
 }
+onFilter = (filterName, filterStatus) =>{
+    console.log(filterName);
+    console.log( typeof(filterStatus));
+    filterStatus = parseInt(filterStatus,10);
+    this.setState({
+        filter: {
+            name: filterName.toLowerCase(),
+            status: filterStatus
+        }
+    })
+    
+    
+}
+onSearch = (keyword) =>{
+    this.setState({
+        keyword: keyword
+    })
+}
   render() {
-    var {tasks, isDisplayForm} = this.state; // var tasks = this.state.tasks
+    var {tasks, isDisplayForm, filter} = this.state; // var tasks = this.state.tasks
+    var {keyword} = this.state
+    console.log(filter);
+    if(filter){
+        if(filter.name){
+           tasks= tasks.filter((task) => {
+                return task.name.toLowerCase().indexOf(filter.name) !==-1
+            })
+        }
+        
+            tasks = tasks.filter((task) =>{
+                if(filter.status ===-1){
+                    return task;
+                
+                }else{
+                    return task.status === (filter.status===1 ? true : false)
+                }
+            })
+           
+      
+    }
+   
+   if(keyword){
+    tasks = tasks.filter((task)=>{
+        return task.name.toLowerCase().indexOf(keyword) !==-1
+    })
+   }
     var elmentTaskForm = isDisplayForm ? <TaskForm reviceEvent={this.closeForm} onSubmit={this.onSubmit} 
     task = {this.taskEditing}/> : ""
     return (
@@ -121,11 +170,12 @@ onUppdate = (id) =>{
                             <span className="fa fa-plus mr-5"></span>
                             Thêm Công Việc
                         </button>
-                        <Control />
+                        <Control onSearch={this.onSearch} />
                         <TaskList tasks={tasks} 
                         onUpdateStatus={this.onUpdateStatus} 
                         onUppdate = {this.onUppdate}
                         onDelete={this.onDelete}  
+                        onFilter = {this.onFilter}
                     />
                     </div>
                 </div>

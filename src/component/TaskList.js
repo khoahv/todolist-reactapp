@@ -5,8 +5,28 @@ import TaskItem from './TaskItem';
 // import * as actions from './../actions/index';
 
 class TaskList extends Component {
+    constructor(props){
+        super(props)
+        this.state = {
+            filterName: '',
+            filterStatus: -1 //all -1
+        }
+    }
+    onChange = (event) =>{
+        var target = event.target;
+        var name = target.name;
+        var value = target.value;
+        this.props.onFilter(
+            name === 'filterName' ? value :  this.state.filterName,
+            name ==='filterStatus' ? value : this.state.filterStatus
+        )
+        this.setState({
+            [name]:value
+        })
+    }
     render() {
        var {tasks} = this.props // var tasks = thiss.props.tasks
+       var {filterName, filterStatus} = this.state
        var elementTask  = tasks.map((task, index)=>{
         return <TaskItem key={task.id}
          index = {index} 
@@ -36,16 +56,16 @@ class TaskList extends Component {
                                         type="text"
                                         className="form-control"
                                         name="filterName"
-                                        // onChange={ this.onChange }
-                                        // value={ this.state.filerName }
+                                        onChange={ this.onChange }
+                                        value={ filterName }
                                     />
                                 </td>
                                 <td>
                                     <select
                                         className="form-control"
-                                        // name="filterStatus"
-                                        // onChange={ this.onChange }
-                                        // value={ this.state.filterStatus }
+                                        name="filterStatus"
+                                        onChange={ this.onChange }
+                                        value={ filterStatus }
                                     >
                                         <option value={-1}>Tất Cả</option>
                                         <option value={0}>Ẩn</option>
